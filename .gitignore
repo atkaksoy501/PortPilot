@@ -6,3 +6,4 @@ obj/
 *.cache
 *.log
 .git-rewrite/
+artifacts/release/

@@ -33,7 +33,20 @@ Ever typed `netstat -ano | findstr LISTENING` just to find what's hogging port 3
 - **Developer Mode** enabled — *Settings → System → For developers → Developer Mode → ON*
 - [**.NET 9 SDK**](https://dotnet.microsoft.com/download/dotnet/9.0)
 
-### Install & Deploy
+### Install from GitHub Releases
+
+1. Download the latest `PortPilot-<version>-win-x64.zip` (or `win-arm64`) from [GitHub Releases](https://github.com/atkaksoy501/PortPilot/releases/latest)
+2. Extract the archive
+3. Run `.\Install-PortPilot.ps1`
+
+The release installer registers the packaged files as a loose-file MSIX package. Developer Mode must be enabled, but no admin rights are required.
+
+After installing:
+1. Open Command Palette (`Win+Alt+Space`)
+2. Type **Reload** → select **Reload Command Palette extensions**
+3. Search for **PortPilot**
+
+### Build from source
 
 ```powershell
 git clone https://github.com/atkaksoy501/PortPilot.git
@@ -69,6 +82,14 @@ After deploying:
 PortPilot/
 ├── Deploy.ps1                        # Build & deploy script
 ├── PortPilot.sln                     # Solution file
+├── gallery-submission/
+│   └── extensions/
+│       └── atkaksoy501/
+│           └── portpilot/            # Ready-to-copy CmdPal gallery submission
+├── scripts/
+│   ├── Build-ReleasePackages.ps1     # Builds GitHub release archives
+│   ├── Install-PortPilot.ps1         # Installs a downloaded release archive
+│   └── PortPilot.Packaging.ps1       # Shared loose-file package helpers
 └── PortPilot/
     ├── Program.cs                    # COM server entry point
     ├── PortPilotExtension.cs         # IExtension implementation
@@ -82,6 +103,20 @@ PortPilot/
     ├── Package.appxmanifest          # MSIX / COM registration
     └── Assets/                       # Extension icons
 ```
+
+## 🖼️ Command Palette Extensions Gallery
+
+This repo includes a reusable gallery submission bundle at `gallery-submission/extensions/atkaksoy501/portpilot/`.
+
+- `extension.json` already matches the expected gallery id/path pair: `atkaksoy501.portpilot` ↔ `atkaksoy501/portpilot`
+- `installSources` points to `https://github.com/atkaksoy501/PortPilot/releases/latest`
+- `icon.png` is ready to copy into the `microsoft/CmdPal-Extensions` repo
+
+To publish PortPilot in the gallery:
+
+1. Push a `v*` tag to trigger `.github/workflows/release.yml` and generate release zip assets
+2. Copy `gallery-submission/extensions/atkaksoy501/portpilot/` into your fork of `microsoft/CmdPal-Extensions`
+3. Open the PR against `main`
 
 ## ⚙️ How It Works
 
