@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../.github/schemas/extension.schema.json",
+  "$schema": "https://raw.githubusercontent.com/microsoft/CmdPal-Extensions/main/.github/schemas/extension.schema.json",
   "id": "atkaksoy501.portpilot",
   "title": "PortPilot",
   "shortDescription": "Find and free dev server ports directly from PowerToys Command Palette.",

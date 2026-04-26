@@ -69,10 +69,10 @@ function Initialize-PortPilotLooseFilePackage {
     $manifest = Get-Content $manifestPath -Raw
     $manifest = $manifest -replace '\$targetnametoken\$\.exe', 'PortPilot.exe'
     $manifest = $manifest -replace '\$targetentrypoint\$', 'Windows.FullTrustApplication'
-    $manifest = $manifest -replace 'Square150x150Logo="Assets\\Square150x150Logo\.png"', 'Square150x150Logo="Assets\Square150x150Logo.scale-200.png"'
-    $manifest = $manifest -replace 'Square44x44Logo="Assets\\Square44x44Logo\.png"', 'Square44x44Logo="Assets\Square44x44Logo.scale-200.png"'
-    $manifest = $manifest -replace 'Wide310x150Logo="Assets\\Wide310x150Logo\.png"', 'Wide310x150Logo="Assets\Wide310x150Logo.scale-200.png"'
-    $manifest = $manifest -replace 'Image="Assets\\SplashScreen\.png"', 'Image="Assets\SplashScreen.scale-200.png"'
+    $manifest = $manifest.Replace('Square150x150Logo="Assets\Square150x150Logo.png"', 'Square150x150Logo="Assets\Square150x150Logo.scale-200.png"')
+    $manifest = $manifest.Replace('Square44x44Logo="Assets\Square44x44Logo.png"', 'Square44x44Logo="Assets\Square44x44Logo.scale-200.png"')
+    $manifest = $manifest.Replace('Wide310x150Logo="Assets\Wide310x150Logo.png"', 'Wide310x150Logo="Assets\Wide310x150Logo.scale-200.png"')
+    $manifest = $manifest.Replace('Image="Assets\SplashScreen.png"', 'Image="Assets\SplashScreen.scale-200.png"')
     $manifest = $manifest -replace '<Resource Language="x-generate"/>', '<Resource Language="en-us"/>'
 
     $identityVersionPattern = [regex]::new('(<Identity\b[^>]*\bVersion=")[^"]+(")')
