@@ -16,6 +16,19 @@ $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 . (Join-Path $PSScriptRoot "PortPilot.Packaging.ps1")
 
+function Get-PortPilotPlatform {
+    param(
+        [Parameter(Mandatory)]
+        [string]$RuntimeIdentifier
+    )
+
+    switch -Regex ($RuntimeIdentifier) {
+        'arm64$' { return 'ARM64' }
+        'x64$' { return 'x64' }
+        default { throw "Unsupported RuntimeIdentifier '$RuntimeIdentifier' for PortPilot release packaging." }
+    }
+}
+
 $projectDir = Join-Path $root "PortPilot"
 $artifactsDir = if ($ArtifactsDir) { $ArtifactsDir } else { Join-Path $root "artifacts\release" }
 
@@ -30,11 +43,12 @@ $createdArchives = [System.Collections.Generic.List[string]]::new()
 
 foreach ($runtimeIdentifier in $RuntimeIdentifiers) {
     $stagingDir = Join-Path $artifactsDir "PortPilot-$runtimeIdentifier"
+    $platform = Get-PortPilotPlatform -RuntimeIdentifier $runtimeIdentifier
 
     New-Item -ItemType Directory -Path $stagingDir | Out-Null
 
-    Write-Host "Publishing PortPilot for $runtimeIdentifier..." -ForegroundColor Cyan
-    & $dotnetPath publish "$projectDir\PortPilot.csproj" -c $Configuration -r $runtimeIdentifier --self-contained true -o $stagingDir
+    Write-Host "Publishing PortPilot for $runtimeIdentifier ($platform)..." -ForegroundColor Cyan
+    & $dotnetPath publish "$projectDir\PortPilot.csproj" -c $Configuration -r $runtimeIdentifier -p:Platform=$platform --self-contained true -o $stagingDir
     if ($LASTEXITCODE -ne 0) {
         throw "dotnet publish failed for $runtimeIdentifier."
     }
