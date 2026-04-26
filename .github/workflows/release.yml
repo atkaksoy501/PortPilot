@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+
+      - name: Build release packages
+        shell: pwsh
+        run: |
+          $packageVersion = if ("${{ github.ref_type }}" -eq "tag") { "${{ github.ref_name }}" } else { "" }
+          .\scripts\Build-ReleasePackages.ps1 -PackageVersion $packageVersion
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: PortPilot-release-packages
+          path: artifacts/release/*.zip
+
+      - name: Publish GitHub release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/release/*.zip
+          generate_release_notes: true
