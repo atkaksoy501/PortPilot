@@ -109,12 +109,12 @@ PortPilot/
 This repo includes a reusable gallery submission bundle at `gallery-submission/extensions/atkaksoy501/portpilot/`.
 
 - `extension.json` already matches the expected gallery id/path pair: `atkaksoy501.portpilot` ↔ `atkaksoy501/portpilot`
-- `installSources` points to `https://github.com/atkaksoy501/PortPilot/releases/latest`
+- `installSources` points to the Microsoft Store listing
 - `icon.png` is ready to copy into the `microsoft/CmdPal-Extensions` repo
 
 To publish PortPilot in the gallery:
 
-1. Push a `v*` tag to trigger `.github/workflows/release.yml` and generate release zip assets
+1. Publish PortPilot in Microsoft Store
 2. Copy `gallery-submission/extensions/atkaksoy501/portpilot/` into your fork of `microsoft/CmdPal-Extensions`
 3. Open the PR against `main`
 
@@ -148,4 +148,3 @@ Contributions welcome! Some ideas:
 ## 📄 License
 
 [MIT](LICENSE)
-
