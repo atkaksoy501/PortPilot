@@ -1,0 +1,31 @@
+name: Store Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      package_version:
+        description: "Package version, for example 1.0.2.0"
+        required: true
+        default: "1.0.2.0"
+
+jobs:
+  package:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+
+      - name: Build Store packages
+        shell: pwsh
+        run: .\scripts\Build-StorePackages.ps1 -PackageVersion "${{ inputs.package_version }}"
+
+      - name: Upload Store packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: PortPilot-store-packages
+          path: artifacts/store/*.msix
