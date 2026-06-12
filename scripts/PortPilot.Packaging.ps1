@@ -52,7 +52,10 @@ function Initialize-PortPilotLooseFilePackage {
         [Parameter(Mandatory)]
         [string]$PackageDir,
 
-        [string]$PackageVersion
+        [string]$PackageVersion,
+
+        [ValidateSet("", "x64", "arm64", "x86", "neutral")]
+        [string]$PackageArchitecture = ""
     )
 
     if (-not (Test-Path $PackageDir)) {
@@ -67,6 +70,31 @@ function Initialize-PortPilotLooseFilePackage {
     $manifestVersion = Get-PortPilotPackageVersion -ProjectDir $ProjectDir -RequestedVersion $PackageVersion
     $manifestPath = Join-Path $ProjectDir "Package.appxmanifest"
     $manifest = Get-Content $manifestPath -Raw
+
+    if (-not [string]::IsNullOrWhiteSpace($PackageArchitecture)) {
+        if ($manifest -match '<Identity\b[^>]*\bProcessorArchitecture="[^"]+"') {
+            $identityArchitecturePattern = [regex]::new('(<Identity\b[^>]*\bProcessorArchitecture=")[^"]+(")')
+            $manifest = $identityArchitecturePattern.Replace(
+                $manifest,
+                [System.Text.RegularExpressions.MatchEvaluator]{
+                    param($match)
+                    "{0}{1}{2}" -f $match.Groups[1].Value, $PackageArchitecture, $match.Groups[2].Value
+                },
+                1
+            )
+        } else {
+            $identityPattern = [regex]::new('(<Identity\b[^>]*)(\s*/>)')
+            $manifest = $identityPattern.Replace(
+                $manifest,
+                [System.Text.RegularExpressions.MatchEvaluator]{
+                    param($match)
+                    "{0}`n    ProcessorArchitecture=`"{1}`"{2}" -f $match.Groups[1].Value, $PackageArchitecture, $match.Groups[2].Value
+                },
+                1
+            )
+        }
+    }
+
     $manifest = $manifest -replace '\$targetnametoken\$\.exe', 'PortPilot.exe'
     $manifest = $manifest -replace '\$targetentrypoint\$', 'Windows.FullTrustApplication'
     $manifest = $manifest.Replace('Square150x150Logo="Assets\Square150x150Logo.png"', 'Square150x150Logo="Assets\Square150x150Logo.scale-200.png"')
