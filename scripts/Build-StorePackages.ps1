@@ -29,6 +29,19 @@ function Get-PortPilotPlatform {
     }
 }
 
+function Get-PortPilotPackageArchitecture {
+    param(
+        [Parameter(Mandatory)]
+        [string]$RuntimeIdentifier
+    )
+
+    switch -Regex ($RuntimeIdentifier) {
+        'arm64$' { return 'arm64' }
+        'x64$' { return 'x64' }
+        default { throw "Unsupported RuntimeIdentifier '$RuntimeIdentifier' for package architecture." }
+    }
+}
+
 function Get-WindowsSdkTool {
     param(
         [Parameter(Mandatory)]
@@ -68,6 +81,7 @@ $createdPackages = [System.Collections.Generic.List[string]]::new()
 foreach ($runtimeIdentifier in $RuntimeIdentifiers) {
     $stagingDir = Join-Path $artifactsDir "PortPilot-$runtimeIdentifier"
     $platform = Get-PortPilotPlatform -RuntimeIdentifier $runtimeIdentifier
+    $packageArchitecture = Get-PortPilotPackageArchitecture -RuntimeIdentifier $runtimeIdentifier
 
     New-Item -ItemType Directory -Path $stagingDir | Out-Null
 
@@ -77,7 +91,11 @@ foreach ($runtimeIdentifier in $RuntimeIdentifiers) {
         throw "dotnet publish failed for $runtimeIdentifier."
     }
 
-    $resolvedVersion = Initialize-PortPilotLooseFilePackage -ProjectDir $projectDir -PackageDir $stagingDir -PackageVersion $PackageVersion
+    $resolvedVersion = Initialize-PortPilotLooseFilePackage `
+        -ProjectDir $projectDir `
+        -PackageDir $stagingDir `
+        -PackageVersion $PackageVersion `
+        -PackageArchitecture $packageArchitecture
 
     $msixPath = Join-Path $artifactsDir "PortPilot-$resolvedVersion-$runtimeIdentifier.msix"
     if (Test-Path $msixPath) {
