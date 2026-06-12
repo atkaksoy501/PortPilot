@@ -5,6 +5,7 @@
 **Find and free dev server ports — right from PowerToys Command Palette.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Privacy Policy](https://img.shields.io/badge/privacy-policy-green.svg)](PRIVACY.md)
 [![.NET 9](https://img.shields.io/badge/.NET-9.0-purple.svg)](https://dotnet.microsoft.com/)
 [![PowerToys](https://img.shields.io/badge/PowerToys-Command%20Palette-0078D4.svg)](https://learn.microsoft.com/windows/powertoys/command-palette/)
 
